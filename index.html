@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b3b67">
+<title>HP · Pictogramas de peligrosidad</title>
+<style>
+:root{
+  --ink:#10243b; --muted:#607086; --brand:#0b5fa5; --brand2:#0b3b67;
+  --bg:#f4f7fb; --card:#fff; --ok:#16784a; --bad:#b42318; --red:#e3262e;
+  --shadow:0 8px 24px rgba(15,35,58,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit}
+.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:92px}
+header{background:linear-gradient(135deg,var(--brand2),var(--brand));color:white;padding:22px 18px 18px}
+header h1{font-size:1.35rem;margin:0 0 5px}
+header p{margin:0;opacity:.9;font-size:.92rem}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:8px;padding:10px;background:rgba(244,247,251,.94);backdrop-filter:blur(10px);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:0 0 auto;white-space:nowrap;border:0;border-radius:14px;padding:11px 14px;background:#e5edf5;color:#27435f;font-weight:700;transition:transform .12s ease,background .2s ease}
+.tab.active{background:var(--brand);color:white}
+.tab:active{transform:scale(.95)}
+main{padding:10px 14px 24px}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:18px}
+.pictobox{display:flex;justify-content:center;align-items:center;min-height:190px;padding:4px}
+.picset{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
+.picset svg{width:148px;height:148px;display:block}
+.picset.duo svg{width:118px;height:118px}
+.nopic{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:154px;height:154px;border:3px dashed #b9c6d4;border-radius:20px;color:#5b6b7d;background:#fbfcfe}
+.nopic .nopic-mark{font-size:2.1rem;line-height:1;color:#9db0c4}
+.nopic .nopic-text{font-size:.82rem;font-weight:800;text-align:center;line-height:1.25;padding:0 10px}
+.piccount{margin-top:9px;font-size:.8rem;color:var(--muted);text-align:center}
+.hp{display:inline-flex;align-items:center;gap:8px;background:#eaf3fb;color:var(--brand2);font-weight:900;border-radius:999px;padding:6px 12px;font-size:.95rem}
+.card h2{font-size:1.35rem;margin:14px 0 8px}
+.desc{line-height:1.45;color:#33485f}
+.example{font-size:.9rem;color:#0f5132;background:#e8f6ee;border-left:4px solid #2e9d5f;border-radius:10px;padding:9px 12px;margin-top:12px;line-height:1.4;text-align:left}
+.note{font-size:.86rem;color:var(--muted);background:#f2f5f8;border-radius:12px;padding:10px 12px;margin-top:12px}
+.actions{display:flex;gap:10px;margin-top:15px}
+.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:800;background:#e7eef5;color:#17334f;flex:1;transition:transform .12s ease,box-shadow .12s ease}
+.btn.primary{background:var(--brand);color:white}
+.btn:active{transform:scale(.96)}
+.mem:active{transform:scale(.95)}
+.mem{transition:transform .12s ease}
+.counter{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 12px;color:var(--muted);font-size:.9rem}
+.quiz-top{display:flex;justify-content:space-between;gap:8px;margin:0 2px 10px}
+.pill{background:white;border-radius:999px;padding:7px 11px;box-shadow:0 4px 14px rgba(15,35,58,.07);font-size:.88rem;font-weight:700}
+.question{text-align:center;font-weight:800;font-size:1.05rem;margin:8px 0 4px}
+.clue{text-align:center;color:var(--muted);font-size:.9rem;line-height:1.4;margin-bottom:10px}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.option{min-height:54px;border:2px solid #d8e1ea;border-radius:15px;background:#fff;font-weight:800;color:#1f3b57;font-size:.92rem;padding:8px 10px;line-height:1.2}
+.option.correct{border-color:#22a06b;background:#e8f7f0;color:#11663f}
+.option.wrong{border-color:#e66a62;background:#fff0ef;color:#9e251e}
+.feedback{min-height:46px;text-align:center;font-weight:800;padding:10px}
+.memory-info{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mem{aspect-ratio:3/4;border:0;border-radius:13px;background:var(--brand2);color:white;font-weight:900;padding:5px;box-shadow:0 4px 12px rgba(15,35,58,.12);perspective:500px}
+.mem.revealed,.mem.matched{background:white;color:var(--ink);border:2px solid #d9e2eb}
+.mem.matched{border-color:#42a879;background:#eefaf4}
+.mem .mini{font-size:.72rem;line-height:1.15}
+.mem .big{font-size:1.08rem}
+.section-title{font-size:1.08rem;margin:8px 0 12px}
+.source{font-size:.78rem;color:#6d7c8e;margin-top:18px;line-height:1.4}
+.progress-track{height:8px;background:#e2e9f1;border-radius:999px;overflow:hidden;margin:0 2px 14px}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:999px;transition:width .35s ease}
+.flip-card{padding:0;background:transparent;box-shadow:none}
+.flip-card .flip-inner{perspective:1400px}
+.flip-inner{position:relative;min-height:400px;cursor:pointer}
+.flip-inner-3d{position:relative;width:100%;height:100%;min-height:400px;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.flip-inner-3d.flipped{transform:rotateY(180deg)}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.flip-back{transform:rotateY(180deg);overflow-y:auto;justify-content:flex-start}
+.flip-back .hp{margin-bottom:10px}
+.flip-back h2{margin:0 0 8px}
+.tap-hint{margin-top:auto;padding-top:14px;color:var(--muted);font-size:.85rem;display:flex;align-items:center;gap:6px}
+.tap-hint svg{width:16px;height:16px;flex:0 0 auto}
+.mem .mem-img{width:84%;max-width:92px;display:block;margin:auto}
+.mem .mem-duo{display:flex;gap:3px;align-items:center;justify-content:center;width:100%}
+.mem .mem-duo svg{width:46%;max-width:52px}
+.mem .mem-name{font-size:.88rem;line-height:1.2;padding:0 3px;font-weight:800}
+.mem .mem-back-face{font-size:1.5rem;color:rgba(255,255,255,.85)}
+.memory-grid.text-mode{grid-template-columns:repeat(2,1fr)}
+.mem-textcard{aspect-ratio:auto!important;min-height:142px;display:flex;align-items:center;justify-content:center;padding:11px}
+.mem-text-face{font-size:.82rem;line-height:1.3;font-weight:700}
+.mem-text-face.is-example{font-weight:600;font-style:italic}
+.mem-tag{display:block;font-style:normal;font-weight:900;font-size:.78rem;letter-spacing:.02em;margin-bottom:4px;color:#c0272d}
+.mem-mini{display:flex;gap:4px;justify-content:center;align-items:center;margin-bottom:5px}
+.mem-mini svg{width:30px;height:30px;display:block}
+.mem-mini.duo svg{width:26px;height:26px}
+.mem-mini-none{font-size:.66rem;font-weight:800;font-style:normal;color:#7b8b9c;border:2px dashed #c3ced9;border-radius:8px;padding:3px 7px;line-height:1.15}
+@media (max-width:420px){
+  header{padding-top:18px}
+  .picset svg{width:124px;height:124px}
+  .picset.duo svg{width:96px;height:96px}
+  .picset.duo{gap:9px}
+  .nopic{width:132px;height:132px}
+  .pictobox{min-height:164px}
+  .memory-grid{grid-template-columns:repeat(3,1fr)}
+  .flip-inner,.flip-inner-3d{min-height:360px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>HP · Pictogramas de peligrosidad</h1>
+  <p>15 códigos HP · pictogramas oficiales GHS/CLP.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="flash">🃏 Flashcards</button>
+  <button class="tab" data-tab="quiz">🎯 ¿Qué HP es?</button>
+  <button class="tab" data-tab="memory">🧠 Memoria</button>
+  <button class="tab" data-tab="memory2">🧠➕ Memoria 2</button>
+</nav>
+
+<main>
+<section id="flash" class="panel active">
+  <div class="counter"><span id="flashCount"></span><button class="btn" style="flex:0 0 auto;padding:8px 11px" id="shuffleFlash">🔀 Mezclar</button></div>
+  <div class="progress-track"><div class="progress-fill" id="flashProgress"></div></div>
+  <article class="card flip-card" id="flashCard">
+    <div class="flip-inner" id="flipZone">
+      <div class="flip-inner-3d" id="flipInner">
+        <div class="flip-front">
+          <div class="pictobox" id="flashPic"></div>
+          <div><span class="hp" id="flashHp"></span></div>
+          <div class="tap-hint">👆 Toca la tarjeta para ver el significado</div>
+        </div>
+        <div class="flip-back">
+          <span class="hp" id="flashHpBack"></span>
+          <h2 id="flashName"></h2>
+          <div class="desc" id="flashDesc"></div>
+          <div class="example" id="flashExample"></div>
+          <div class="note" id="flashNote"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+  <div class="actions">
+    <button class="btn" id="prevFlash">← Anterior</button>
+    <button class="btn primary" id="flipBtnFlash">↺ Girar</button>
+    <button class="btn" id="nextFlash">Siguiente →</button>
+  </div>
+</section>
+
+<section id="quiz" class="panel">
+  <div class="quiz-top">
+    <span class="pill" id="quizProgress">Pregunta 1/10</span>
+    <span class="pill" id="quizScore">⭐ 0</span>
+  </div>
+  <article class="card">
+    <div class="question">¿Qué código HP corresponde?</div>
+    <div class="clue">Un mismo pictograma sirve a varias características y tres códigos no tienen ninguno: por eso siempre hay una pista.</div>
+    <div class="pictobox" id="quizPic"></div>
+    <div class="clue" id="quizClue"></div>
+    <div class="options" id="quizOptions"></div>
+    <div class="feedback" id="quizFeedback"></div>
+    <button class="btn primary" id="nextQuestion" style="width:100%;display:none">Siguiente pregunta</button>
+  </article>
+</section>
+
+<section id="memory" class="panel">
+  <h2 class="section-title">Empareja cada pictograma con su significado</h2>
+  <div class="memory-info">
+    <span class="pill" id="moves">Movimientos: 0</span>
+    <button class="btn" id="restartMemory" style="flex:0 0 auto;padding:8px 11px">↻ Reiniciar</button>
+  </div>
+  <div class="memory-grid" id="memoryGrid"></div>
+  <div class="feedback" id="memoryFeedback"></div>
+</section>
+
+<section id="memory2" class="panel">
+  <h2 class="section-title">Empareja cada descripción con su ejemplo más común</h2>
+  <div class="memory-info">
+    <span class="pill" id="moves2">Movimientos: 0</span>
+    <button class="btn" id="restartMemory2" style="flex:0 0 auto;padding:8px 11px">↻ Reiniciar</button>
+  </div>
+  <div class="memory-grid text-mode" id="memoryGrid2"></div>
+  <div class="feedback" id="memoryFeedback2"></div>
+</section>
+
+<div class="source">
+  Pictogramas GHS/CLP redibujados como vectores (rombo rojo, símbolo negro, fondo transparente), según el
+  Reglamento (CE) 1272/2008. Códigos HP según el Anexo III de la Directiva 2008/98/CE, modificado por el
+  Reglamento (UE) 1357/2014.<br>
+  HP4, HP5, HP6, HP13 y HP14 llevan dos pictogramas. HP9, HP12 y HP15 no tienen pictograma CLP: se señalizan
+  por la vía del ADR o de su normativa específica.
+</div>
+</main>
+</div>
+
+<script>
+
+/* ---------- Pictogramas GHS/CLP dibujados en SVG ----------
+   Rombo rojo, fondo blanco, símbolo negro, sin fondo de imagen. */
+const GHS = {
+  GHS01: `<circle cx="48" cy="60" r="10.5"/><path d="M42 51 L34 29 L48 47 Z"/><path d="M53 50 L60 28 L57 48 Z"/><path d="M57 54 L74 40 L61 58 Z"/><path d="M39 55 L24 44 L41 59 Z"/><path d="M38 66 L25 68 L39 70 Z"/><path d="M59 66 L73 63 L59 71 Z"/><circle cx="68" cy="32" r="2.5"/><circle cx="30" cy="35" r="2.1"/><circle cx="73" cy="51" r="1.9"/>`,
+  GHS02: `<path d="M53 22c2.4 8.1-.4 12.6-4.4 16.6-5 5-9.9 8.8-9.9 16 0 8.5 6.6 14.6 14.9 14.6 8.3 0 14.9-6.3 14.9-14.9 0-5.8-2.5-9.7-6.1-13.1.3 3.1-.9 5.2-2.9 6.1 1.9-9.3-2.5-18.4-6.5-25.3z"/><rect x="31" y="70.5" width="38" height="5" rx="1.5"/>`,
+  GHS03: `<path d="M51 23c1.5 5-.3 7.8-2.8 10.3-3.1 3.1-6.1 5.5-6.1 9.9 0 5.3 4.1 9.1 9.2 9.1 5.1 0 9.2-3.9 9.2-9.2 0-3.6-1.6-6-3.8-8.1.2 1.9-.6 3.2-1.8 3.8 1.2-5.8-1.5-11.4-3.9-15.8z"/><circle cx="50" cy="63" r="11.5" fill="none" stroke="#000" stroke-width="4.8"/><rect x="35" y="77.5" width="30" height="4.6" rx="1.4"/>`,
+  GHS05: `<g transform="rotate(36 40 27)"><rect x="35.9" y="15" width="8.2" height="24" rx="1.4"/></g><g transform="rotate(-36 60 27)"><rect x="55.9" y="15" width="8.2" height="24" rx="1.4"/></g><path d="M31 40 l3.1 6 a3.5 3.5 0 0 1 -6.2 0 z"/><path d="M35 50 l3.1 6 a3.5 3.5 0 0 1 -6.2 0 z"/><path d="M69 40 l3.1 6 a3.5 3.5 0 0 1 -6.2 0 z"/><path d="M65 50 l3.1 6 a3.5 3.5 0 0 1 -6.2 0 z"/><path d="M23 58 h8 l3 5 l3 -5 h10 l-4.5 9 h-24 z"/><g transform="translate(53,47)"><rect x="1.6" y="5" width="4.2" height="10" rx="2.1"/><rect x="6.6" y="2" width="4.2" height="13" rx="2.1"/><rect x="11.6" y="1" width="4.2" height="14" rx="2.1"/><rect x="16.6" y="4.5" width="4.2" height="10.5" rx="2.1"/><path d="M0.4 13.4 c0-1.7 1.3-2.9 3-2.9 h15.2 c1.9 0 3.2 1.3 3.2 3.1 v3.6 c0 3.6-3 6.2-6.8 6.2 h-8.2 c-3.8 0-6.4-2.6-6.4-6.2 z"/></g>`,
+  GHS06: `<g stroke="#000" stroke-width="6" stroke-linecap="round"><line x1="34" y1="52" x2="66" y2="72"/><line x1="66" y1="52" x2="34" y2="72"/></g><circle cx="33.5" cy="51.5" r="4.2"/><circle cx="66.5" cy="51.5" r="4.2"/><circle cx="33.5" cy="72.5" r="4.2"/><circle cx="66.5" cy="72.5" r="4.2"/><path d="M50 20c-9.4 0-16.2 6.8-16.2 15.4 0 5.2 2.3 8.6 4.9 10.5v5.2c0 1.9 1.5 3.4 3.4 3.4h15.8c1.9 0 3.4-1.5 3.4-3.4v-5.2c2.6-1.9 4.9-5.3 4.9-10.5 0-8.6-6.8-15.4-16.2-15.4z"/><circle cx="43.6" cy="37" r="4.2" fill="#fff"/><circle cx="56.4" cy="37" r="4.2" fill="#fff"/><path d="M50 42 l-3 5.2 h6 z" fill="#fff"/><rect x="44.7" y="49.4" width="2.2" height="5.4" fill="#fff"/><rect x="48.9" y="49.4" width="2.2" height="5.4" fill="#fff"/><rect x="53.1" y="49.4" width="2.2" height="5.4" fill="#fff"/>`,
+  GHS07: `<path d="M45 26 h10 l-1.8 33 h-6.4 z"/><circle cx="50" cy="67" r="5.2"/>`,
+  GHS08: `<ellipse cx="50" cy="27" rx="12.6" ry="15.2"/><path d="M50 39.5 C42.5 39.5 38.5 42.5 33.5 47.5 L26 56.5 C24.5 58.5 24 60.5 24 63.5 L27.5 73 L72.5 73 L76 63.5 C76 60.5 75.5 58.5 74 56.5 L66.5 47.5 C61.5 42.5 57.5 39.5 50 39.5 Z"/><polygon points="49.8,43.0 52.5,58.1 61.2,52.6 55.1,61.9 75.0,62.4 55.2,66.2 60.0,75.2 52.3,68.2 51.1,77.0 47.4,69.2 40.4,75.5 43.7,65.8 25.0,63.2 46.0,62.2 36.9,53.2 48.4,60.2" fill="#fff"/><path d="M48.6 42.5 h2.9 l-.8 10 h-1.3 z" fill="#fff"/>`,
+  GHS09: `<rect x="18" y="54" width="64" height="4.4"/><path d="M31 54 l2 -22 h5 l2 22 z"/><path d="M33.4 43 l-8.6 -7.4 -2.4 3 9 7.8 z"/><path d="M37.4 45 l9 -7.6 2.4 3 -9.4 8 z"/><path d="M33.6 36 l-5.4 -5.6 -2.5 2.8 6 5.8 z"/><path d="M38 38 l6.2 -5.4 2.4 3 -6.6 5.6 z"/><path d="M50 70 c7.2-7.6 19.8-7.6 27 0 c-7.2 7.6-19.8 7.6-27 0 z"/><path d="M50 70 l-9.8 -7.6 v15.2 z"/><g stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="64.5" y1="67" x2="68.5" y2="71"/><line x1="68.5" y1="67" x2="64.5" y2="71"/></g>`
+};
+const GHS_NAME = {
+  GHS01:"Bomba explotando", GHS02:"Llama", GHS03:"Llama sobre círculo",
+  GHS05:"Corrosión", GHS06:"Calavera y tibias cruzadas", GHS07:"Signo de exclamación",
+  GHS08:"Peligro para la salud", GHS09:"Medio ambiente"
+};
+function ghsSVG(code){
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${GHS_NAME[code]||code}">
+    <polygon points="50,3.5 96.5,50 50,96.5 3.5,50" fill="#fff" stroke="#e3262e" stroke-width="7" stroke-linejoin="round"/>
+    <g fill="#000">${GHS[code]}</g></svg>`;
+}
+
+const hazards = [
+ {hp:"HP1", name:"Explosivo", pics:["GHS01"],
+  desc:"Puede desprender gases a una temperatura, presión y velocidad tales que causen daños en el entorno.",
+  clue:"Explosiona o desprende gases de forma violenta.",
+  example:"Residuos de pirotecnia y de la fabricación de explosivos."},
+
+ {hp:"HP2", name:"Comburente", pics:["GHS03"],
+  desc:"Libera oxígeno y puede provocar o favorecer la combustión de otras sustancias.",
+  clue:"No arde por sí mismo, pero aviva o provoca la combustión de otros materiales.",
+  example:"Agentes blanqueantes y desinfectantes."},
+
+ {hp:"HP3", name:"Inflamable", pics:["GHS02"],
+  desc:"Residuos líquidos, sólidos, gaseosos o en aerosol que se inflaman con facilidad o que liberan gases inflamables.",
+  clue:"Se inflama con facilidad o libera gases inflamables.",
+  example:"Disolventes, pinturas, barnices y aerosoles."},
+
+ {hp:"HP4", name:"Irritante · irritación cutánea y lesiones oculares", pics:["GHS05","GHS07"],
+  desc:"Puede producir irritación de la piel o lesiones oculares graves al entrar en contacto con el residuo.",
+  clue:"Daña la piel y los ojos, pero sin llegar a la corrosión severa.",
+  example:"Detergentes industriales y productos de limpieza.",
+  note:"Dos pictogramas: corrosión (lesiones oculares graves) y signo de exclamación (irritación)."},
+
+ {hp:"HP5", name:"Toxicidad específica en órganos diana (STOT) / Toxicidad por aspiración", pics:["GHS08","GHS07"],
+  desc:"Produce toxicidad en órganos concretos, por una exposición única o repetida, o daña las vías respiratorias al ser aspirado.",
+  clue:"Daña órganos determinados o resulta peligroso si se aspira hacia los pulmones.",
+  example:"Barnices, aceites minerales y disolventes halogenados.",
+  note:"Dos pictogramas: peligro para la salud (órganos diana, aspiración) y signo de exclamación (efectos menos graves)."},
+
+ {hp:"HP6", name:"Toxicidad aguda", pics:["GHS06","GHS07"],
+  desc:"Puede provocar efectos tóxicos agudos tras la administración por vía oral o cutánea, o por inhalación.",
+  clue:"Una exposición breve basta para causar un efecto tóxico grave.",
+  example:"Plaguicidas de alta toxicidad.",
+  note:"Dos pictogramas: calavera (categorías 1 a 3) y signo de exclamación (categoría 4)."},
+
+ {hp:"HP7", name:"Carcinógeno", pics:["GHS08"],
+  desc:"Provoca cáncer o aumenta su incidencia.",
+  clue:"Puede inducir cáncer o aumentar su frecuencia.",
+  example:"Amianto y residuos con hidrocarburos aromáticos policíclicos."},
+
+ {hp:"HP8", name:"Corrosivo", pics:["GHS05"],
+  desc:"Provoca corrosión cutánea al aplicarse sobre la piel; también puede atacar metales.",
+  clue:"Destruye los tejidos por contacto y puede corroer los metales.",
+  example:"Sosa cáustica, ácidos y bases fuertes."},
+
+ {hp:"HP9", name:"Infeccioso", pics:[],
+  desc:"Contiene microorganismos viables o sus toxinas, capaces de provocar enfermedades en el ser humano o en otros organismos vivos.",
+  clue:"Riesgo biológico: microorganismos o toxinas capaces de provocar enfermedad.",
+  example:"Residuos hospitalarios y de laboratorio.",
+  note:"Sin pictograma CLP. Se señaliza con la marca de sustancia infecciosa de la clase 6.2 del ADR."},
+
+ {hp:"HP10", name:"Tóxico para la reproducción", pics:["GHS08"],
+  desc:"Produce efectos negativos en la función sexual y la fertilidad, o daños en el desarrollo de los descendientes.",
+  clue:"Afecta a la fertilidad, a la función sexual o al desarrollo del feto.",
+  example:"Compuestos de plomo y determinados plaguicidas."},
+
+ {hp:"HP11", name:"Mutágeno", pics:["GHS08"],
+  desc:"Puede provocar mutaciones, es decir, cambios permanentes en la cantidad o la estructura del material genético de una célula.",
+  clue:"Provoca alteraciones permanentes del material genético.",
+  example:"Cadmio y residuos de la fabricación de pesticidas."},
+
+ {hp:"HP12", name:"Liberación de gases de toxicidad aguda", pics:[],
+  desc:"Libera gases de toxicidad aguda al entrar en contacto con el agua o con un ácido.",
+  clue:"En contacto con agua o ácidos desprende un gas tóxico.",
+  example:"Cianuros y residuos que desprenden gas tóxico con el agua.",
+  note:"Sin pictograma CLP propio. Se identifica por las indicaciones EUH029, EUH031 y EUH032."},
+
+ {hp:"HP13", name:"Sensibilizante", pics:["GHS08","GHS07"],
+  desc:"Contiene una o varias sustancias con efectos sensibilizantes para la piel o para los órganos respiratorios.",
+  clue:"Provoca una reacción alérgica en la piel o en las vías respiratorias; no afecta a los ojos.",
+  example:"Resinas epoxi y residuos de la fabricación de pigmentos.",
+  note:"Dos pictogramas: peligro para la salud (sensibilización respiratoria) y signo de exclamación (sensibilización cutánea)."},
+
+ {hp:"HP14", name:"Ecotóxico", pics:["GHS09","GHS07"],
+  desc:"Presenta o puede presentar riesgos inmediatos o diferidos para uno o varios compartimentos del medio ambiente.",
+  clue:"Daña el medio acuático o la capa de ozono.",
+  example:"Aceites de motor, plaguicidas y residuos con PCB.",
+  note:"Dos pictogramas: medio ambiente (peligro acuático) y signo de exclamación (peligro para la capa de ozono, EUH059)."},
+
+ {hp:"HP15", name:"Peligrosidad no original", pics:[],
+  desc:"Residuos capaces de presentar posteriormente una característica de peligrosidad que el residuo original no presentaba de forma directa.",
+  clue:"La peligrosidad aparece después, no estaba en el residuo de partida.",
+  example:"Lixiviados de vertedero y residuos que evolucionan tras su gestión.",
+  note:"Sin pictograma CLP. Se evalúa caso por caso según la normativa específica."}
+];
+
+/* ---------- Render de pictogramas ---------- */
+function picHTML(h, opts){
+  const showCount = !opts || opts.count !== false;
+  if(!h.pics.length){
+    return `<div><div class="picset">
+        <div class="nopic"><span class="nopic-mark">&#9671;</span>
+        <span class="nopic-text">Sin pictograma GHS/CLP</span></div>
+      </div>${showCount ? '<div class="piccount">Esta característica no tiene pictograma propio</div>' : ''}</div>`;
+  }
+  const duo = h.pics.length > 1 ? " duo" : "";
+  const svgs = h.pics.map(ghsSVG).join("");
+  const label = h.pics.length > 1 ? `${h.pics.length} pictogramas` : "1 pictograma";
+  return `<div><div class="picset${duo}">${svgs}</div>${showCount ? `<div class="piccount">${label}</div>` : ''}</div>`;
+}
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5) }
+
+/* Tabs */
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active"); document.getElementById(b.dataset.tab).classList.add("active");
+});
+
+/* Flashcards */
+let flashDeck=[...hazards], fi=0, flashFlipped=false;
+function setFlashFlip(state){
+  flashFlipped=state;
+  flipInner.classList.toggle("flipped",flashFlipped);
+}
+function renderFlash(){
+  const h=flashDeck[fi];
+  flashCount.textContent=`${fi+1} de ${flashDeck.length}`;
+  flashProgress.style.width=`${((fi+1)/flashDeck.length)*100}%`;
+  flashPic.innerHTML=picHTML(h); flashHp.textContent=h.hp; flashHpBack.textContent=h.hp; flashName.textContent=h.name;
+  flashDesc.textContent=h.desc;
+  flashExample.textContent=h.example ? `Ejemplo más común: ${h.example}` : "";
+  flashNote.textContent=h.note || "";
+  flashNote.style.display=flashNote.textContent?"block":"none";
+  setFlashFlip(false);
+}
+flipZone.onclick=()=>setFlashFlip(!flashFlipped);
+flipBtnFlash.onclick=()=>setFlashFlip(!flashFlipped);
+nextFlash.onclick=()=>{fi=(fi+1)%flashDeck.length;renderFlash()}
+prevFlash.onclick=()=>{fi=(fi-1+flashDeck.length)%flashDeck.length;renderFlash()}
+shuffleFlash.onclick=()=>{flashDeck=shuffle(hazards);fi=0;renderFlash()}
+renderFlash();
+
+/* Quiz */
+let quizSet=[], qi=0, score=0, answered=false;
+function newQuiz(){
+  quizSet=shuffle(hazards).slice(0,10); qi=0; score=0; renderQuiz();
+}
+function renderQuiz(){
+  answered=false; nextQuestion.style.display="none"; quizFeedback.textContent="";
+  quizProgress.textContent=`Pregunta ${qi+1}/${quizSet.length}`; quizScore.textContent=`\u2b50 ${score}`;
+  const h=quizSet[qi]; quizPic.innerHTML=picHTML(h,{count:false}); quizClue.textContent=h.clue;
+  let pool=shuffle(hazards.filter(x=>x.hp!==h.hp)).slice(0,3);
+  let opts=shuffle([h,...pool]);
+  quizOptions.innerHTML="";
+  opts.forEach(o=>{
+    const b=document.createElement("button"); b.className="option"; b.textContent=`${o.hp} \u00b7 ${o.name.split(" \u00b7 ")[0].split(" / ")[0]}`; b.dataset.hp=o.hp;
+    b.onclick=()=>answerQuiz(b,o.hp,h.hp); quizOptions.appendChild(b);
+  });
+}
+function answerQuiz(btn,chosen,correct){
+  if(answered)return; answered=true;
+  const correctHazard=hazards.find(x=>x.hp===correct);
+  [...quizOptions.children].forEach(b=>{
+    if(b.dataset.hp===correct)b.classList.add("correct");
+  });
+  if(chosen===correct){score++;quizFeedback.textContent="\u2705 \u00a1Correcto!";btn.classList.add("correct")}
+  else{quizFeedback.textContent=`\u274c Era ${correct} \u00b7 ${correctHazard?correctHazard.name:""}`;btn.classList.add("wrong")}
+  quizScore.textContent=`\u2b50 ${score}`; nextQuestion.style.display="block";
+}
+function advanceQuiz(){
+  qi++;
+  if(qi>=quizSet.length){
+    quizFeedback.textContent=`Resultado: ${score}/${quizSet.length}`;
+    nextQuestion.textContent="Jugar otra vez";
+    nextQuestion.onclick=()=>{nextQuestion.textContent="Siguiente pregunta";nextQuestion.onclick=advanceQuiz;newQuiz()}
+  }else renderQuiz();
+}
+nextQuestion.onclick=advanceQuiz;
+newQuiz();
+
+/* Memoria: solo los HP que sí tienen pictograma */
+const withPics = hazards.filter(h=>h.pics.length);
+let memCards=[], memPairCount=Math.min(8,withPics.length), first=null, lock=false, movesN=0, matched=0;
+function buildMemory(){
+  const selected=shuffle(withPics).slice(0,memPairCount);
+  memCards=shuffle(selected.flatMap(h=>[
+    {id:h.hp, type:"img", hp:h.hp, pics:h.pics},
+    {id:h.hp, type:"name", text:h.name}
+  ]));
+  first=null;lock=false;movesN=0;matched=0;moves.textContent="Movimientos: 0";memoryFeedback.textContent="";
+  memoryGrid.innerHTML="";
+  memCards.forEach((c,i)=>{
+    const b=document.createElement("button"); b.className="mem"; b.dataset.i=i; b.dataset.id=c.id;
+    b.innerHTML='<div class="mem-back-face">&#9670;</div>'; b.onclick=()=>flipMem(b,c); memoryGrid.appendChild(b);
+  });
+}
+function faceHTML(c){
+  if(c.type!=="img") return `<div class="mem-name">${c.text}</div>`;
+  return c.pics.length>1
+    ? `<div class="mem-duo">${c.pics.map(ghsSVG).join("")}</div>`
+    : `<div class="mem-img">${ghsSVG(c.pics[0])}</div>`;
+}
+function flipMem(b,c){
+  if(lock||b.classList.contains("revealed")||b.classList.contains("matched"))return;
+  b.classList.add("revealed"); b.innerHTML=faceHTML(c);
+  if(!first){first={b,c};return}
+  movesN++; moves.textContent=`Movimientos: ${movesN}`;
+  if(first.c.id===c.id && first.c.type!==c.type){
+    first.b.classList.add("matched"); b.classList.add("matched");
+    first=null;matched++;
+    if(matched===memPairCount)memoryFeedback.textContent=`\ud83c\udf89 \u00a1Completado en ${movesN} movimientos!`;
+  }else{
+    lock=true; const a=first.b; first=null;
+    setTimeout(()=>{[a,b].forEach(x=>{x.classList.remove("revealed");x.innerHTML='<div class="mem-back-face">&#9670;</div>'});lock=false},800);
+  }
+}
+restartMemory.onclick=buildMemory; buildMemory();
+
+/* Memoria 2: descripción contra su ejemplo más común */
+let memCards2=[], memPairCount2=6, first2=null, lock2=false, movesN2=0, matched2=0;
+function buildMemory2(){
+  const pool=hazards.filter(h=>h.example);
+  const selected=shuffle(pool).slice(0,memPairCount2);
+  memCards2=shuffle(selected.flatMap(h=>[
+    {id:h.hp, type:"desc", text:h.desc},
+    {id:h.hp, type:"example", pics:h.pics, text:`${h.hp} \u00b7 ${h.name}\nEjemplo: ${h.example}`}
+  ]));
+  first2=null;lock2=false;movesN2=0;matched2=0;moves2.textContent="Movimientos: 0";memoryFeedback2.textContent="";
+  memoryGrid2.innerHTML="";
+  memCards2.forEach((c,i)=>{
+    const b=document.createElement("button"); b.className="mem mem-textcard"; b.dataset.i=i; b.dataset.id=c.id;
+    b.innerHTML='<div class="mem-back-face">&#9670;</div>'; b.onclick=()=>flipMem2(b,c); memoryGrid2.appendChild(b);
+  });
+}
+function faceHTML2(c){
+  if(c.type==="example"){
+    const [label, ...rest] = c.text.split("\n");
+    const pics = c.pics || [];
+    const mini = pics.length
+      ? `<div class="mem-mini${pics.length>1?" duo":""}">${pics.map(ghsSVG).join("")}</div>`
+      : `<div class="mem-mini"><span class="mem-mini-none">Sin pictograma</span></div>`;
+    return `<div class="mem-text-face is-example">${mini}<span class="mem-tag">${label}</span>${rest.join(" ")}</div>`;
+  }
+  return `<div class="mem-text-face">${c.text}</div>`;
+}
+function flipMem2(b,c){
+  if(lock2||b.classList.contains("revealed")||b.classList.contains("matched"))return;
+  b.classList.add("revealed"); b.innerHTML=faceHTML2(c);
+  if(!first2){first2={b,c};return}
+  movesN2++; moves2.textContent=`Movimientos: ${movesN2}`;
+  if(first2.c.id===c.id && first2.c.type!==c.type){
+    first2.b.classList.add("matched"); b.classList.add("matched");
+    first2=null;matched2++;
+    if(matched2===memPairCount2)memoryFeedback2.textContent=`\ud83c\udf89 \u00a1Completado en ${movesN2} movimientos!`;
+  }else{
+    lock2=true; const a=first2.b; first2=null;
+    setTimeout(()=>{[a,b].forEach(x=>{x.classList.remove("revealed");x.innerHTML='<div class="mem-back-face">&#9670;</div>'});lock2=false},900);
+  }
+}
+restartMemory2.onclick=buildMemory2; buildMemory2();
+
+</script>
+</body>
+</html>
